@@ -1,4 +1,4 @@
-# FestiPlan — version refactorisée
+# FestiPlan — version refactorisée (FATIMA BOUGRIN - NOLAN SERLAINE)
 
 API FastAPI de gestion d'un festival metal fictif, réorganisée en **architecture hexagonale** avec un modèle **DDD**.
 
