@@ -22,6 +22,7 @@ def move(client, concert_id, start, end):
 
 # ---------------------------------------------------------------- défaut 1
 
+
 class TestDefect1Conflicts:
     def test_move_onto_occupied_stage_is_refused(self, seeded_client):
         before = seeded_client.get("/concerts/2").json()
@@ -33,10 +34,16 @@ class TestDefect1Conflicts:
     def test_artist_cannot_play_on_two_stages_at_once(self, seeded_client):
         """R3 : Crimson Engine joue sur la Mainstage le 20/06 de 20h à 21h (#14).
         On lui programme un concert sur la Warzone à midi, puis on essaie de le déplacer à 20h15."""
-        created = seeded_client.post("/concerts", json={
-            "festival_id": 1, "artist_id": 2, "stage_id": 2,  # Crimson Engine, Warzone, 20/06 12h-13h
-            "start_time": "2027-06-20T12:00:00", "end_time": "2027-06-20T13:00:00",
-        })
+        created = seeded_client.post(
+            "/concerts",
+            json={
+                "festival_id": 1,
+                "artist_id": 2,
+                "stage_id": 2,  # Crimson Engine, Warzone, 20/06 12h-13h
+                "start_time": "2027-06-20T12:00:00",
+                "end_time": "2027-06-20T13:00:00",
+            },
+        )
         assert created.status_code == 201
         warzone_id = created.json()["id"]
         r = move(seeded_client, warzone_id, "2027-06-20T20:15:00", "2027-06-20T20:45:00")  # #14 Mainstage 20h-21h
@@ -54,6 +61,7 @@ class TestDefect1Conflicts:
 
 
 # ---------------------------------------------------------------- défaut 2
+
 
 class TestDefect2NotificationFailure:
     @pytest.fixture
@@ -86,6 +94,7 @@ def test_successful_notification_is_reported(seeded_client, notifier):
 
 # ---------------------------------------------------------------- défaut 3
 
+
 class TestDefect3PublishedPlanning:
     @pytest.fixture
     def published(self, seeded_client):
@@ -100,10 +109,16 @@ class TestDefect3PublishedPlanning:
 
     def test_cancel_and_create_after_publication_are_refused(self, published):
         assert published.post("/concerts/5/cancel").status_code == 409
-        r = published.post("/concerts", json={
-            "festival_id": 1, "artist_id": 8, "stage_id": 2,
-            "start_time": "2027-06-20T10:00:00", "end_time": "2027-06-20T11:00:00",
-        })
+        r = published.post(
+            "/concerts",
+            json={
+                "festival_id": 1,
+                "artist_id": 8,
+                "stage_id": 2,
+                "start_time": "2027-06-20T10:00:00",
+                "end_time": "2027-06-20T11:00:00",
+            },
+        )
         assert r.status_code == 409
 
     def test_publish_twice_is_refused(self, published):
@@ -121,7 +136,9 @@ def test_r8_inconsistent_legacy_planning_cannot_be_published(seeded_client, sett
 
     engine = create_engine(settings.database_url)
     with engine.begin() as conn:  # crée un chevauchement directement en base, comme l'ancien défaut 1
-        conn.execute(text("UPDATE concerts SET start_time='2027-06-18 18:30:00', end_time='2027-06-18 19:15:00' WHERE id=2"))
+        conn.execute(
+            text("UPDATE concerts SET start_time='2027-06-18 18:30:00', end_time='2027-06-18 19:15:00' WHERE id=2")
+        )
     engine.dispose()
     r = seeded_client.post("/festivals/1/publish")
     assert r.status_code == 409

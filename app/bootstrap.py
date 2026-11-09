@@ -64,22 +64,53 @@ class Container:
         Base.metadata.create_all(self.engine)
 
     # -- cas d'utilisation (une nouvelle instance par appel = une transaction)
-    def create_festival(self): return CreateFestival(self.uow())
-    def list_festivals(self): return ListFestivals(self.uow())
-    def get_festival(self): return GetFestival(self.uow())
-    def publish_planning(self): return PublishPlanning(self.uow(), self.dispatcher())
-    def unpublish_planning(self): return UnpublishPlanning(self.uow(), self.dispatcher())
-    def register_artist(self): return RegisterArtist(self.uow())
-    def list_artists(self): return ListArtists(self.uow())
-    def add_stage(self): return AddStage(self.uow())
-    def list_stages(self): return ListStages(self.uow())
-    def schedule_concert(self): return ScheduleConcert(self.uow())
-    def reschedule_concert(self): return RescheduleConcert(self.uow(), self.dispatcher())
-    def cancel_concert(self): return CancelConcert(self.uow(), self.dispatcher())
-    def get_concert(self): return GetConcert(self.uow())
-    def get_planning(self): return GetPlanning(self.uow())
-    def report_incident(self): return ReportIncident(self.uow())
-    def list_incidents(self): return ListIncidents(self.uow())
+    def create_festival(self):
+        return CreateFestival(self.uow())
+
+    def list_festivals(self):
+        return ListFestivals(self.uow())
+
+    def get_festival(self):
+        return GetFestival(self.uow())
+
+    def publish_planning(self):
+        return PublishPlanning(self.uow(), self.dispatcher())
+
+    def unpublish_planning(self):
+        return UnpublishPlanning(self.uow(), self.dispatcher())
+
+    def register_artist(self):
+        return RegisterArtist(self.uow())
+
+    def list_artists(self):
+        return ListArtists(self.uow())
+
+    def add_stage(self):
+        return AddStage(self.uow())
+
+    def list_stages(self):
+        return ListStages(self.uow())
+
+    def schedule_concert(self):
+        return ScheduleConcert(self.uow())
+
+    def reschedule_concert(self):
+        return RescheduleConcert(self.uow(), self.dispatcher())
+
+    def cancel_concert(self):
+        return CancelConcert(self.uow(), self.dispatcher())
+
+    def get_concert(self):
+        return GetConcert(self.uow())
+
+    def get_planning(self):
+        return GetPlanning(self.uow())
+
+    def report_incident(self):
+        return ReportIncident(self.uow())
+
+    def list_incidents(self):
+        return ListIncidents(self.uow())
 
 
 def build_container(settings: Settings | None = None, notifier: Notifier | None = None) -> Container:

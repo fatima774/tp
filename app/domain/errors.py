@@ -66,7 +66,5 @@ class PlanningNotPublishableError(DomainError):
     rule = "R8"
 
     def __init__(self, violations: list[str]) -> None:
-        super().__init__(
-            "Le planning ne peut pas être publié : il ne respecte pas les règles de programmation"
-        )
+        super().__init__("Le planning ne peut pas être publié : il ne respecte pas les règles de programmation")
         self.violations = violations

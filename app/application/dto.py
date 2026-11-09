@@ -67,9 +67,7 @@ class ConcertView:
 
     @classmethod
     def of(cls, festival: Festival, c: Concert) -> ConcertView:
-        return cls(
-            c.id, festival.id, c.artist_id, c.stage_id, c.slot.start, c.slot.end, c.status.value
-        )
+        return cls(c.id, festival.id, c.artist_id, c.stage_id, c.slot.start, c.slot.end, c.status.value)
 
 
 @dataclass(frozen=True)

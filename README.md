@@ -3,6 +3,7 @@
 API FastAPI de gestion d'un festival metal fictif, réorganisée en **architecture hexagonale** avec un modèle **DDD**.
 
 - Note d'architecture (diagnostic, modèle, choix, tests, limites) : [`docs/NOTE_ARCHITECTURE.md`](docs/NOTE_ARCHITECTURE.md)
+- Preuve avant / après des corrections : [`docs/PREUVE_AVANT_APRES.md`](docs/PREUVE_AVANT_APRES.md)
 - Diagrammes UML (composants, séquence, domaine, architecture initiale) : [`diagrammes/`](diagrammes/)
 
 ## Fonctionnalités
@@ -57,7 +58,21 @@ pytest tests/domain        # règles métier seules (sans FastAPI ni SQLite)
 pytest tests/application   # cas d'utilisation avec doubles en mémoire
 pytest tests/adapters      # routes HTTP et persistance SQLAlchemy
 pytest tests/regression    # les 3 défauts initiaux
+pytest tests/test_architecture.py  # le sens des dépendances (domaine sans framework)
 ```
+
+Qualité du code (optionnel) : `pip install ruff` puis `ruff check app tests` et `ruff format --check app tests`.
+
+## Démonstration rapide des corrections
+
+Après `python -m app.seed` et `uvicorn app.main:app --reload`, dans http://127.0.0.1:8000/docs :
+
+1. `PATCH /concerts/2/reschedule` avec `{"start_time": "2027-06-18T18:30:00", "end_time": "2027-06-18T19:15:00"}` → **409**, règle R2 (défaut 1).
+2. `POST /festivals/1/publish` → 200, puis `PATCH /concerts/4/reschedule` avec `{"start_time": "2027-06-18T16:00:00", "end_time": "2027-06-18T16:45:00"}` → **409**, règle R7 (défaut 3).
+3. `POST /festivals/1/unpublish` → le même déplacement est accepté.
+4. Arrêter le serveur, relancer avec `FESTIPLAN_FAIL_NOTIFICATIONS=true`, déplacer un concert → **200** avec `"notification_status": "failed"`, et `GET /concerts/{id}` montre bien le nouveau créneau (défaut 2).
+
+Comparaison complète avec la version initiale : [`docs/PREUVE_AVANT_APRES.md`](docs/PREUVE_AVANT_APRES.md).
 
 ## Endpoints
 
@@ -88,13 +103,18 @@ app/
 ├── application/   Cas d'utilisation + ports (interfaces)
 ├── adapters/
 │   ├── inbound/http/              FastAPI (contrôleurs, schémas, erreurs)
-│   └── outbound/persistence/      SQLAlchemy
+│   ├── outbound/persistence/      SQLAlchemy
 │   └── outbound/notifications/    Faux e-mail
 ├── bootstrap.py   Assemblage des dépendances
 ├── main.py        Application FastAPI
 └── seed.py        Données de démonstration
 tests/
 ├── domain/  application/  adapters/  regression/
+├── test_architecture.py   Vérifie le sens des dépendances
 ├── fakes.py       Doubles en mémoire (repositories, unité de travail, notifier)
 └── builders.py    Fabriques d'objets pour les tests
+docs/
+├── NOTE_ARCHITECTURE.md     Note d'architecture
+└── PREUVE_AVANT_APRES.md    Comparaison avec la version initiale
+diagrammes/        Diagrammes UML (composants, séquence, domaine, architecture initiale)
 ```

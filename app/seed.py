@@ -86,10 +86,7 @@ def seed(settings: Settings | None = None) -> None:
             )
         )
     c.engine.dispose()
-    print(
-        f"Données chargées : {festival.name}, {len(STAGES)} scènes, "
-        f"{len(ARTISTS)} artistes, {len(SHOWS)} concerts."
-    )
+    print(f"Données chargées : {festival.name}, {len(STAGES)} scènes, {len(ARTISTS)} artistes, {len(SHOWS)} concerts.")
 
 
 if __name__ == "__main__":

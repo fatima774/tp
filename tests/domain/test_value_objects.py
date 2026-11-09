@@ -1,6 +1,6 @@
 """Tests unitaires des objets-valeurs : aucun FastAPI, aucune base de données."""
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -22,7 +22,7 @@ class TestTimeSlot:
 
     def test_timezone_aware_dates_are_refused(self):
         with pytest.raises(InvalidValueError):
-            TimeSlot(datetime(2027, 6, 18, 18, tzinfo=timezone.utc), datetime(2027, 6, 18, 19, tzinfo=timezone.utc))
+            TimeSlot(datetime(2027, 6, 18, 18, tzinfo=UTC), datetime(2027, 6, 18, 19, tzinfo=UTC))
 
     def test_overlap(self):
         assert slot(18, (18, 0), (19, 0)).overlaps(slot(18, (18, 30), (19, 30)))

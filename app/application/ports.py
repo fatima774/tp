@@ -8,7 +8,8 @@ et les tests utilisent des implémentations en mémoire (`tests/fakes.py`).
 
 from __future__ import annotations
 
-from typing import Iterable, Protocol
+from collections.abc import Iterable
+from typing import Protocol
 
 from app.domain.artist import Artist
 from app.domain.events import DomainEvent

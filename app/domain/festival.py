@@ -17,10 +17,10 @@ identifiant, mais on ne les modifie jamais directement depuis l'extérieur.
 
 from __future__ import annotations
 
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from enum import Enum
 from itertools import combinations
-from typing import Iterable, Mapping
 
 from app.domain.artist import Artist
 from app.domain.errors import (
@@ -270,9 +270,7 @@ class Festival:
 
     def _ensure_modifiable(self) -> None:
         if self.is_published:
-            raise PlanningLockedError(
-                "Le planning est publié : dépubliez-le avant de le modifier"
-            )
+            raise PlanningLockedError("Le planning est publié : dépubliez-le avant de le modifier")
 
     def _stage_or_fail(self, stage_id: int) -> Stage:
         stage = self.find_stage(stage_id)
@@ -295,8 +293,7 @@ class Festival:
         missing = artist.required_equipment.missing_from(stage.equipment)
         if missing:
             raise MissingEquipmentError(
-                f"La scène {stage.name} ne dispose pas des équipements requis : "
-                + ", ".join(sorted(missing))
+                f"La scène {stage.name} ne dispose pas des équipements requis : " + ", ".join(sorted(missing))
             )
 
     def _ensure_no_conflict(

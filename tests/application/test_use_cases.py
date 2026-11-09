@@ -50,6 +50,7 @@ def reschedule(uow, notifier, concert_id, start, end):
 
 # ---------------------------------------------------------------- déplacer
 
+
 class TestRescheduleConcert:
     def test_valid_move_is_committed_and_notified(self, uow, notifier):
         result = reschedule(uow, notifier, 11, at(18, 22), at(18, 23))
@@ -90,6 +91,7 @@ class TestRescheduleConcert:
 
 # ---------------------------------------------------------------- publier / dépublier
 
+
 class TestPublication:
     def test_publish_commits_then_notifies(self, uow, notifier):
         result = PublishPlanning(uow, EventDispatcher(notifier)).execute(1)
@@ -114,6 +116,7 @@ class TestPublication:
 
 # ---------------------------------------------------------------- programmer / annuler / consulter
 
+
 class TestScheduleConcert:
     def test_schedule(self, uow):
         view = ScheduleConcert(uow).execute(ScheduleConcertCommand(1, CONCRETE, MAINSTAGE, at(19, 12), at(19, 13)))
@@ -123,7 +126,9 @@ class TestScheduleConcert:
     @pytest.mark.parametrize("festival_id,artist_id", [(999, IRON_VOW), (1, 999)])
     def test_r4_unknown_references(self, uow, festival_id, artist_id):
         with pytest.raises(InvalidReferenceError):
-            ScheduleConcert(uow).execute(ScheduleConcertCommand(festival_id, artist_id, MAINSTAGE, at(19, 12), at(19, 13)))
+            ScheduleConcert(uow).execute(
+                ScheduleConcertCommand(festival_id, artist_id, MAINSTAGE, at(19, 12), at(19, 13))
+            )
 
 
 def test_cancel_notifies(uow, notifier):
@@ -137,6 +142,7 @@ def test_planning_is_chronological(uow):
 
 
 # ---------------------------------------------------------------- catalogue et incidents
+
 
 def test_duplicate_artist_refused(uow):
     with pytest.raises(AlreadyExistsError):

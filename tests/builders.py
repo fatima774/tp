@@ -47,7 +47,10 @@ def festival(concerts=(), status: FestivalStatus = FestivalStatus.PREPARATION) -
 
 
 def reference_planning() -> list[Concert]:
-    """Iron Vow sur la Mainstage 18h-19h, Crimson Engine sur la Mainstage 19h30-20h30, Concrete Reign sur la Warzone 17h-17h45."""
+    """Planning de référence du 18/06.
+
+    Iron Vow Mainstage 18h-19h, Crimson Engine Mainstage 19h30-20h30, Concrete Reign Warzone 17h-17h45.
+    """
     return [
         concert(10, IRON_VOW, MAINSTAGE, slot(18, (18, 0), (19, 0))),
         concert(11, CRIMSON, MAINSTAGE, slot(18, (19, 30), (20, 30))),

@@ -5,7 +5,9 @@ from app.application.ports import NotificationError
 from app.domain.events import ConcertRescheduled
 from tests.builders import slot
 
-EVENT = ConcertRescheduled(festival_id=1, concert_id=2, previous_slot=slot(18, (19, 30), (20, 30)), new_slot=slot(18, (22, 0), (23, 0)))
+EVENT = ConcertRescheduled(
+    festival_id=1, concert_id=2, previous_slot=slot(18, (19, 30), (20, 30)), new_slot=slot(18, (22, 0), (23, 0))
+)
 
 
 def test_fake_email_prints_message(capsys):

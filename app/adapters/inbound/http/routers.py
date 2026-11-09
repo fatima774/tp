@@ -133,9 +133,7 @@ def create_concert(payload: ConcertCreate, c: Container = Depends(get_container)
 
 
 @concerts.patch("/{concert_id}/reschedule", response_model=ConcertChangeRead)
-def reschedule_concert(
-    concert_id: int, payload: ConcertReschedule, c: Container = Depends(get_container)
-):
+def reschedule_concert(concert_id: int, payload: ConcertReschedule, c: Container = Depends(get_container)):
     cmd = RescheduleConcertCommand(concert_id, payload.start_time, payload.end_time)
     return concert_change(c.reschedule_concert().execute(cmd))
 

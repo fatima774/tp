@@ -57,13 +57,17 @@ def test_equipment_json_and_legacy_csv_format():
 def test_legacy_rows_are_readable(container):
     """Une base créée par la version initiale (équipements en CSV) reste lisible."""
     with container.engine.begin() as conn:
-        conn.execute(text(
-            "INSERT INTO festivals (id, name, location, start_date, end_date, status) "
-            "VALUES (1, 'Old', 'Clisson', '2027-06-18 10:00:00', '2027-06-20 23:59:00', 'preparation')"
-        ))
-        conn.execute(text(
-            "INSERT INTO stages (id, festival_id, name, capacity, available_equipment) "
-            "VALUES (1, 1, 'Main', 100, 'large_rigging,special_lighting')"
-        ))
+        conn.execute(
+            text(
+                "INSERT INTO festivals (id, name, location, start_date, end_date, status) "
+                "VALUES (1, 'Old', 'Clisson', '2027-06-18 10:00:00', '2027-06-20 23:59:00', 'preparation')"
+            )
+        )
+        conn.execute(
+            text(
+                "INSERT INTO stages (id, festival_id, name, capacity, available_equipment) "
+                "VALUES (1, 1, 'Main', 100, 'large_rigging,special_lighting')"
+            )
+        )
     with container.uow() as uow:
         assert uow.festivals.get(1).find_stage(1).equipment.as_sorted_list() == ["large_rigging", "special_lighting"]

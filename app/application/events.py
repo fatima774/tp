@@ -11,8 +11,8 @@ erreur 500. L'échec est journalisé pour que l'équipe puisse renvoyer le messa
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterable
 from enum import Enum
-from typing import Iterable
 
 from app.application.ports import Notifier
 from app.domain.events import DomainEvent

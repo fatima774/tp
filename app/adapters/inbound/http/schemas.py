@@ -31,9 +31,7 @@ class FestivalRead(ReadModel):
 
 
 class FestivalChangeRead(FestivalRead):
-    notification_status: str = Field(
-        description="none | sent | failed — un échec n'annule pas l'opération"
-    )
+    notification_status: str = Field(description="none | sent | failed — un échec n'annule pas l'opération")
 
 
 class ArtistCreate(BaseModel):
@@ -88,9 +86,7 @@ class ConcertRead(ReadModel):
 
 
 class ConcertChangeRead(ConcertRead):
-    notification_status: str = Field(
-        description="none | sent | failed — un échec n'annule pas l'opération"
-    )
+    notification_status: str = Field(description="none | sent | failed — un échec n'annule pas l'opération")
 
 
 class IncidentCreate(BaseModel):

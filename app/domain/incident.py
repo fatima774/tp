@@ -33,8 +33,6 @@ class Incident:
         return cls(
             id=None,
             concert_id=concert_id,
-            description=require_text(
-                description, "La description de l'incident", max_length=2000, rule="R10"
-            ),
+            description=require_text(description, "La description de l'incident", max_length=2000, rule="R10"),
             occurred_at=occurred_at,
         )

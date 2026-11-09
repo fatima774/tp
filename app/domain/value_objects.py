@@ -9,9 +9,9 @@ impossible d'avoir en mémoire un créneau dont la fin précède le début.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Iterable
 
 from app.domain.errors import InvalidValueError
 
@@ -31,13 +31,9 @@ def require_text(
     if not cleaned:
         raise InvalidValueError(f"{label} ne peut pas être vide", rule=rule)
     if len(cleaned) < min_length:
-        raise InvalidValueError(
-            f"{label} doit contenir au moins {min_length} caractères", rule=rule
-        )
+        raise InvalidValueError(f"{label} doit contenir au moins {min_length} caractères", rule=rule)
     if max_length is not None and len(cleaned) > max_length:
-        raise InvalidValueError(
-            f"{label} ne doit pas dépasser {max_length} caractères", rule=rule
-        )
+        raise InvalidValueError(f"{label} ne doit pas dépasser {max_length} caractères", rule=rule)
     return cleaned
 
 
@@ -51,9 +47,7 @@ def ensure_naive(*values: datetime) -> None:
         if not isinstance(value, datetime):
             raise InvalidValueError("Une date valide est attendue")
         if value.tzinfo is not None:
-            raise InvalidValueError(
-                "Les dates doivent être exprimées sans fuseau horaire (heure locale du festival)"
-            )
+            raise InvalidValueError("Les dates doivent être exprimées sans fuseau horaire (heure locale du festival)")
 
 
 @dataclass(frozen=True)
@@ -92,9 +86,7 @@ class FestivalPeriod:
     def __post_init__(self) -> None:
         ensure_naive(self.start, self.end)
         if self.end <= self.start:
-            raise InvalidValueError(
-                "La date de fin doit être postérieure à la date de début"
-            )
+            raise InvalidValueError("La date de fin doit être postérieure à la date de début")
 
     def contains(self, slot: TimeSlot) -> bool:
         """R6 : un concert doit se dérouler entièrement dans la période du festival."""
@@ -133,6 +125,4 @@ class Capacity:
         if isinstance(self.value, bool) or not isinstance(self.value, int):
             raise InvalidValueError("La capacité doit être un nombre entier", rule="R9")
         if self.value <= 0:
-            raise InvalidValueError(
-                "La capacité d'une scène doit être strictement positive", rule="R9"
-            )
+            raise InvalidValueError("La capacité d'une scène doit être strictement positive", rule="R9")

@@ -164,7 +164,7 @@ app/
 └── seed.py
 ```
 
-**Le sens des dépendances va toujours vers l'intérieur :** adaptateurs → application → domaine. Le domaine ne dépend de rien. L'application ne dépend que des ports (des interfaces). On peut le vérifier avec `grep -rE "fastapi|sqlalchemy|pydantic" app/domain app/application`, qui ne renvoie rien.
+**Le sens des dépendances va toujours vers l'intérieur :** adaptateurs → application → domaine. Le domaine ne dépend de rien. L'application ne dépend que des ports (des interfaces). Cette règle n'est pas seulement documentée, elle est **testée** : `tests/test_architecture.py` analyse les imports de `app/domain` et `app/application` et échoue si l'un d'eux importe FastAPI, SQLAlchemy, Pydantic ou un adaptateur.
 
 | Couche | Responsabilité |
 |---|---|
@@ -174,6 +174,19 @@ app/
 | Adaptateur persistance | Traduction tables ↔ objets métier, transaction |
 | Adaptateur notification | Formatage et envoi du message |
 | Composition root | Choix des implémentations concrètes |
+
+### Démarche de refactorisation
+
+La refactorisation a suivi l'ordre recommandé par le sujet, en partant du déplacement d'un concert, puis en généralisant :
+
+1. **Comportement existant figé** : les 6 tests d'origine et les scénarios des 3 défauts sont rejoués avant toute modification (résultats : [`PREUVE_AVANT_APRES.md`](PREUVE_AVANT_APRES.md)).
+2. **Règles isolées** dans des objets-valeurs (`TimeSlot`, `FestivalPeriod`, `EquipmentSet`, `Capacity`), testables seuls.
+3. **Agrégat `Festival`** : `reschedule_concert()` regroupe R2, R3, R6, R7. Toute modification du planning passe par lui.
+4. **Cas d'utilisation `RescheduleConcert`** avec ses ports (`FestivalRepository`, `UnitOfWork`, `Notifier`), testé avec des doubles en mémoire.
+5. **Adaptateurs** : repository SQLAlchemy, faux e-mail, puis le contrôleur FastAPI réduit à un appel du cas d'utilisation.
+6. **Même démarche** pour programmer, annuler, publier/dépublier, les scènes, les artistes et les incidents.
+
+À chaque étape, la suite de tests est relancée et l'API reste exécutable (`python -m app.seed` puis `uvicorn app.main:app`).
 
 ---
 
@@ -235,13 +248,13 @@ Scénarios rejoués par l'API sur le jeu de démonstration.
 | Doublon d'artiste | **500** | 409 |
 | Dates avec fuseau horaire | **500** | 400 |
 
-Ces scénarios sont automatisés dans `tests/regression/test_known_defects.py`.
+Ces scénarios sont automatisés dans `tests/regression/test_known_defects.py`. Le détail de la comparaison, rejouée sur les deux versions, est dans [`PREUVE_AVANT_APRES.md`](PREUVE_AVANT_APRES.md).
 
 ---
 
 ## 6. Stratégie de tests
 
-`pytest` : **105 tests**, environ 7 secondes.
+`pytest` : **109 tests**, environ 5 secondes.
 
 | Niveau | Dossier | Contenu | Dépendances |
 |---|---|---|---|
@@ -249,6 +262,7 @@ Ces scénarios sont automatisés dans `tests/regression/test_known_defects.py`.
 | Cas d'utilisation | `tests/application/` | programmation, déplacement, publication, gestion des erreurs, commit ou pas, appels au notifier, panne de notification | doubles en mémoire (`tests/fakes.py`) |
 | Adaptateurs | `tests/adapters/` | routes HTTP et codes de retour, aller-retour de l'agrégat en base, pas d'écriture sans commit, lecture de l'ancien format CSV, faux e-mail | SQLite temporaire (une base par test) |
 | Non-régression | `tests/regression/` | les 3 défauts + R8 sur des données incohérentes | API + SQLite + jeu de démo |
+| Architecture | `tests/test_architecture.py` | le domaine et l'application n'importent ni framework ni adaptateur | aucune (analyse des imports) |
 
 Les 6 tests de la version initiale sont conservés tels quels dans `tests/adapters/test_http_api.py` et passent toujours.
 
@@ -257,6 +271,8 @@ Les fixtures (`tests/conftest.py`) créent l'application avec `create_app(settin
 ---
 
 ## 7. Limites restantes et compromis
+
+**Ce que nous n'avons volontairement pas ajouté** (pour ne pas surconcevoir) : pas de service de domaine séparé (les règles tiennent dans l'agrégat), pas de bus d'événements ni de traitement asynchrone (un simple `EventDispatcher` suffit), pas de séparation lecture/écriture (CQRS), un seul module de ports. Chaque abstraction présente répond à un besoin : tester sans base (ports, unité de travail), changer de notifier (port `Notifier`), protéger une règle (objets-valeurs, agrégat).
 
 - **Taille de l'agrégat :** chaque opération charge tout le festival (scènes et concerts). C'est acceptable pour quelques dizaines de concerts. Pour des milliers, il faudrait découper (par exemple un agrégat par jour ou par scène) et déplacer R3 dans un service de domaine.
 - **Concurrence :** deux déplacements simultanés pourraient chacun passer la vérification puis être enregistrés. Correction possible : verrouillage optimiste (colonne `version` sur `festivals`, `version_id_col` de SQLAlchemy).

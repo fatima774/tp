@@ -1,0 +1,24 @@
+[project]
+name = "festiplan"
+version = "1.0.0"
+description = "API FastAPI de gestion d'un festival — architecture hexagonale et DDD"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    # avertissement interne de Starlette (TestClient), sans lien avec le projet
+    "ignore:The anyio.abc.BlockingPortal alias is deprecated:DeprecationWarning",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["UP042"]  # Enum(str, Enum) gardé volontairement : lisible et compatible
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = ["fastapi.Depends"]

@@ -32,6 +32,7 @@ ALL_REQUIREMENTS = {IRON_VOW: EquipmentSet(), CRIMSON: EquipmentSet(), CONCRETE:
 
 # ---------------------------------------------------------------- programmer
 
+
 class TestScheduleConcert:
     def test_valid_concert_is_added(self):
         f = festival()
@@ -73,6 +74,7 @@ class TestScheduleConcert:
 
 
 # ---------------------------------------------------------------- déplacer (défaut 1)
+
 
 class TestRescheduleConcert:
     def test_r2_move_onto_occupied_stage_refused(self):
@@ -120,6 +122,7 @@ class TestRescheduleConcert:
 
 # ---------------------------------------------------------------- annuler
 
+
 class TestCancelConcert:
     def test_cancel(self):
         f = festival(reference_planning())
@@ -140,6 +143,7 @@ class TestCancelConcert:
 
 
 # ---------------------------------------------------------------- publication (R7, R8)
+
 
 class TestPublication:
     def test_publish_valid_planning(self):

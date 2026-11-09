@@ -8,7 +8,7 @@ obtenir les identifiants générés. Le commit est décidé par l'unité de trav
 from __future__ import annotations
 
 import json
-from typing import Iterable
+from collections.abc import Iterable
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
@@ -25,8 +25,8 @@ from app.domain.festival import Concert, ConcertStatus, Festival, FestivalStatus
 from app.domain.incident import Incident
 from app.domain.value_objects import Capacity, EquipmentSet, FestivalPeriod, TimeSlot
 
-
 # ---------------------------------------------------------------- équipements
+
 
 def encode_equipment(equipment: EquipmentSet) -> str:
     """Stocké en JSON : un nom d'équipement peut contenir une virgule sans être découpé."""
@@ -45,23 +45,20 @@ def decode_equipment(raw: str | None) -> EquipmentSet:
 
 # ---------------------------------------------------------------- festivals
 
+
 class SqlAlchemyFestivalRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
 
     def _query(self):
-        return select(FestivalRow).options(
-            selectinload(FestivalRow.stages), selectinload(FestivalRow.concerts)
-        )
+        return select(FestivalRow).options(selectinload(FestivalRow.stages), selectinload(FestivalRow.concerts))
 
     def get(self, festival_id: int) -> Festival | None:
         row = self.session.scalars(self._query().where(FestivalRow.id == festival_id)).first()
         return self._to_domain(row) if row else None
 
     def get_by_concert(self, concert_id: int) -> Festival | None:
-        festival_id = self.session.scalar(
-            select(ConcertRow.festival_id).where(ConcertRow.id == concert_id)
-        )
+        festival_id = self.session.scalar(select(ConcertRow.festival_id).where(ConcertRow.id == concert_id))
         return self.get(festival_id) if festival_id is not None else None
 
     def list(self) -> list[Festival]:
@@ -161,6 +158,7 @@ class SqlAlchemyFestivalRepository:
 
 # ---------------------------------------------------------------- artistes
 
+
 class SqlAlchemyArtistRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
@@ -205,6 +203,7 @@ class SqlAlchemyArtistRepository:
 
 # ---------------------------------------------------------------- incidents
 
+
 class SqlAlchemyIncidentRepository:
     def __init__(self, session: Session) -> None:
         self.session = session
@@ -225,6 +224,4 @@ class SqlAlchemyIncidentRepository:
         if concert_id is not None:
             query = query.where(IncidentRow.concert_id == concert_id)
         rows = self.session.scalars(query.order_by(IncidentRow.occurred_at.desc())).all()
-        return [
-            Incident(r.id, r.concert_id, r.description, r.occurred_at, r.resolved) for r in rows
-        ]
+        return [Incident(r.id, r.concert_id, r.description, r.occurred_at, r.resolved) for r in rows]
