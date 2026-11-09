@@ -1,13 +1,14 @@
 # Note d'architecture — Refactorisation de FestiPlan
 
-Schémas (fichiers `.png` + sources PlantUML `.puml`) dans `docs/diagrams/` :
+Schémas dans le dossier `diagrammes/` :
 
 | Fichier | Contenu |
 |---|---|
-| `01_architecture_initiale.png` | Diagnostic de l'architecture de départ (étape 1) |
-| `02_modele_domaine.png` | Modèle du domaine DDD (étape 2) |
-| `03_composants.png` | **Diagramme UML de composants** (architecture finale) |
-| `04_sequence_deplacement.png` | **Diagramme UML de séquence** : déplacement d'un concert |
+| `architecture_initiale.pdf` | Diagnostic de l'architecture de départ (étape 1) |
+| `modèle_du_domaine.pdf` | Modèle du domaine DDD (étape 2) |
+| `diagramme_de_composants.pdf` | **Diagramme UML de composants** (architecture finale) |
+| `séquence_déplacer_un_concert.pdf` | **Diagramme UML de séquence** : déplacement d'un concert |
+
 
 ---
 

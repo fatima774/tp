@@ -3,7 +3,7 @@
 API FastAPI de gestion d'un festival metal fictif, réorganisée en **architecture hexagonale** avec un modèle **DDD**.
 
 - Note d'architecture (diagnostic, modèle, choix, tests, limites) : [`docs/NOTE_ARCHITECTURE.md`](docs/NOTE_ARCHITECTURE.md)
-- Diagrammes UML (composants, séquence, domaine, architecture initiale) : [`docs/diagrams/`](docs/diagrams/)
+- Diagrammes UML (composants, séquence, domaine, architecture initiale) : [`diagrammes/`](diagrammes/)
 
 ## Fonctionnalités
 - Festivals, artistes, scènes et concerts
